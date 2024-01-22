@@ -1,17 +1,23 @@
 let fs = require('fs');
+const { resolve } = require('path');
 let path = require('path');
 let pathFile = path.join(__dirname, 'text.txt');
 
-function readFile(path){
-    let readStream = fs.createReadStream(pathFile, 'utf8');
-    let readData = '';
-    readStream.on('data', function(chunk) {
-    readData +=  chunk;
-    })
-    readStream.on('end', () => {
-        console.log(readData);
-    }) 
-    return readData; 
+async function readFile(path){
+    return new Promise((resolve)=>{
+        let readStream = fs.createReadStream(path);
+        let readData = '';
+        readStream.on('data', function(chunk) {
+        readData += chunk;
+        })
+        readStream.on('end', () => {
+            resolve(readData) ;
+        }) 
+    })   
 }
-console.log(readFile(path));
+
+readFile(pathFile).then((data) => {
+    console.log(data);
+})
+
 exports.readFile = readFile;
